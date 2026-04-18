@@ -1,3 +1,4 @@
+using CryptoBot.Bitvavo;
 using CryptoBot.Domain.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,11 @@ builder.Services.Configure<BitvavoOptions>(
 
 builder.Services.Configure<BotOptions>(
         builder.Configuration.GetSection("BotOptions"));
+
+builder.Services.AddHttpClient<BitvavoClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["BitvavoOptions:BaseUrl"]!);
+});
 
 var app = builder.Build();
 
