@@ -15,6 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CryptoBot.Api\CryptoBot.Api.csproj" />
+    <ProjectReference Include="..\CryptoBot.Bitvavo\CryptoBot.Bitvavo.csproj" />
+    <ProjectReference Include="..\CryptoBot.Domain\CryptoBot.Domain.csproj" />
+    <ProjectReference Include="..\CryptoBot.Web\CryptoBot.Web.csproj" />
+    <ProjectReference Include="..\CryptoBot.Worker\CryptoBot.Worker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

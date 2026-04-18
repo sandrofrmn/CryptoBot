@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoBot.Domain\CryptoBot.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
