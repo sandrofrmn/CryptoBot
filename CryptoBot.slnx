@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="CryptoBot.Api/CryptoBot.Api.csproj" />
+  <Project Path="CryptoBot.Bitvavo/CryptoBot.Bitvavo.csproj" />
+  <Project Path="CryptoBot.Domain/CryptoBot.Domain.csproj" />
+  <Project Path="CryptoBot.Tests/CryptoBot.Tests.csproj" />
+  <Project Path="CryptoBot.Web/CryptoBot.Web.csproj" />
+  <Project Path="CryptoBot.Worker/CryptoBot.Worker.csproj" />
+</Solution>
