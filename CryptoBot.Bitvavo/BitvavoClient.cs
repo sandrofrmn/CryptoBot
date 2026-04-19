@@ -1,4 +1,6 @@
-﻿using CryptoBot.Domain.Configuration;
+﻿using CryptoBot.Bitvavo.Converters;
+using CryptoBot.Domain.Configuration;
+using CryptoBot.Domain.Models;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
@@ -9,6 +11,11 @@ public class BitvavoClient(IOptions<BitvavoOptions> options, HttpClient httpClie
 {
     private readonly IOptions<BitvavoOptions> _options = options;
     private readonly HttpClient _httpClient = httpClient;
+
+    private static readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
 
     private HttpRequestMessage BuildRequest(HttpMethod method, string path, string body)
     {
@@ -32,7 +39,7 @@ public class BitvavoClient(IOptions<BitvavoOptions> options, HttpClient httpClie
         return httpRequestMessage;
     }
 
-    private async Task<T> SendAsync<T>(HttpRequestMessage httpRequestMessage)
+    private async Task<T> SendAsync<T>(HttpRequestMessage httpRequestMessage, JsonSerializerOptions? jsonOptions = null)
     {
         var response = await _httpClient.SendAsync(httpRequestMessage);
 
@@ -42,12 +49,28 @@ public class BitvavoClient(IOptions<BitvavoOptions> options, HttpClient httpClie
         {
             throw new Exception($"{response.StatusCode}: {body}");
         }
-
-        return JsonSerializer.Deserialize<T>(body, _jsonOptions)!;
+        
+        return jsonOptions != null ? JsonSerializer.Deserialize<T>(body, jsonOptions)! : JsonSerializer.Deserialize<T>(body, _jsonOptions)!;
     }
 
-    private static readonly JsonSerializerOptions _jsonOptions = new()
+
+    public async Task<Ticker> GetTickerAsync(string market)
     {
-        PropertyNameCaseInsensitive = true
-    };
+        var httpRequest = BuildRequest(HttpMethod.Get, $"/ticker/24h?market={market}", string.Empty);
+        return await SendAsync<Ticker>(httpRequest);
+    }
+
+    public async Task<IReadOnlyList<Candle>> GetCandlesAsync(string market, string interval, int limit)
+    {
+        var httpRequest = BuildRequest(HttpMethod.Get, $"/{market}/candles?interval={interval}&limit={limit}", string.Empty);
+
+        var options = new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true,
+        };
+
+        options.Converters.Add(new CandleConverter(market));
+
+        return await SendAsync<IReadOnlyList<Candle>>(httpRequest, options);
+    }
 }
